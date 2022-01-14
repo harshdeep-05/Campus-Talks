@@ -3,3 +3,4 @@ djangorestframework==3.11.0
 sqlparse
 backports.zoneinfo
 asgiref
+bleach
