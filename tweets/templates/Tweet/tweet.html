@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Required meta tags always come first -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>
+		{% block title %}
+		{% endblock %}
+	</title>
+	<!-- Favicon -->
+	{% load static %}
+	<link rel="shortcut icon" href="{% static 'Tweet/img/tweet.png' %}" />
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+	<script src="https://use.fontawesome.com/d6e3b600e9.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-dark bg-primary navbar-full navbar-fixed-top">
+		<div class="container">
+			<button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+		&#9776;
+	</button>
+	<div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+		<a class="navbar-brand" href="/">Twitter</a>
+		<div class="btn-group pull-xs-right" role="group">
+			<a class="btn btn-info" href="/accounts/profile/user/{{request.user.username}}">{{request.user.username}}</a>
+			<a class="btn btn-secondary" href="/notifications/all">Notifications <span class="label label-pill label-default">{{request.user.profile.notification_count}}</span></a>
+			<a class="btn btn-danger" href="/accounts/logout">Logout</a>
+		</div>
+		<form class="form-inline pull-xs-right" action="{% url 'tweets:search' %}">
+			<input class="form-control" name=search type="text" placeholder="Search">
+			<button class="btn btn-success" type="submit">Search</button>&nbsp
+		</form>
+		</div>
+	</nav>
+	<br>
+	<br>
+	<div class="container">
+		<br>
+		{% block content %}
+		{% endblock %}
+	</div>
+<!-- jQuery first, then Bootstrap JS. -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".responsive-image img").each(function(){
+				$(this).addClass("img-fluid")
+		})
+	})
+</script>
+</body>
+</html>

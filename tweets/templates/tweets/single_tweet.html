@@ -1,0 +1,51 @@
+{% extends "Tweet/tweet.html" %}
+
+{% block title %}
+	{{tweet_data.user.username}} says
+{% endblock %}
+
+{% block content %}
+<div class="row text-xs-center">
+    <div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-block">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<h4 class="list-group-item-heading"><a href="/accounts/profile/user/{{tweet_data.user.username}}">{{tweet_data.user.first_name}} {{tweet_data.user.last_name}}</a> <small class="text-muted">@{{tweet_data.user.username}} {{tweet_data.timestamp}}</small></h4>
+								<div class="container">
+		              <p class="list-group-item-text responsive-image" style="word-wrap: break-word;">{{tweet_data.html_tags_edit}}</p>
+		            </div>
+							</li>
+						</ul>
+					</div>
+					<form method="POST" action=".">{%csrf_token%}
+						<div class="input-group card-block">
+				      <input type="text" class="form-control" id="id_content" name="content" placeholder="Reply to @{{tweet_data.user.username}}" maxlength="140" autofocus="True" required="True" value=" @{{tweet_data.user.username}}">
+				      <span class="input-group-btn">
+			        <button class="btn btn-secondary" type="submit">Reply</button>
+				      </span>
+				    </div>
+						<input type="hidden" name="parent" value="{{tweet_data.id}}">
+						<input type="hidden" name="tweet_user" value="{{request.user.id}}">
+					</form>
+				{% if tweet_data.reply_count %}
+					<div class="card-block">
+				    <h4 class="card-title">Replies</h4>
+						<ul class="list-group">
+							{% for reply in tweet_data.children %}
+							<li class="list-group-item">
+								<h4 class="list-group-item-heading"><a href="/accounts/profile/user/{{reply.user.username}}">{{reply.user.first_name}} {{reply.user.last_name}}</a> <small class="text-muted">@{{reply.user.username}} {{reply.timestamp|timesince}}</small></h4>
+								<div class="container">
+									<p class="list-group-item-text responsive-image" style="word-wrap: break-word;">{{reply.html_tags_edit}}</p>
+								</div>
+							</li>
+							{% endfor %}
+						</ul>
+				  </div>
+				{% endif %}
+			</div>
+		</div>
+       <div class="col-md-3"></div>
+	</div>
+{% endblock %}

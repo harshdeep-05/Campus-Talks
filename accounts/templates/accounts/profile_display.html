@@ -1,0 +1,135 @@
+{% extends "Tweet/tweet.html" %}
+
+{% block title %}
+	{{profile_basics.username}}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-3">
+    <div class="card">
+      <img class="card-img-top img-fluid" src="{{profile_contents.display_pic.url}}" alt="Card image cap">
+      <div class="card-block">
+        <h4 class="card-title">{{profile_basics.first_name}} {{profile_basics.last_name}}
+          <small class="text-muted">@{{profile_basics.username}}</small>
+        </h4>
+        <p class="card-text">{{profile_contents.bio}}<small>
+          <br>
+          From {{profile_contents.location}}
+          <br>
+          Joined {{profile_basics.date_joined|date:"M Y"}}
+        </small></p>
+				{% if profile_basics.id == request.user.id %}
+					<a href="/accounts/profile/edit" class="btn btn-secondary-outline">Edit Profile</a>
+				{% elif user_info.ifollowthemflag == False %}
+					<form action="/accounts/profile/follow" method="post">{% csrf_token %}
+							<input type="hidden" name="follow" value="{{ profile_basics.id }}">
+							<button type="submit" class="btn btn-primary" value="Follow">Follow</button>
+					</form>
+				{% else %}
+					<form action="/accounts/profile/unfollow" method="post">{% csrf_token %}
+							<input type="hidden" name="unfollow" value="{{ profile_basics.id }}">
+							<button type="submit" class="btn btn-secondary-outline" value="UnFollow">UnFollow</button>
+					</form>
+				{% endif %}
+      </div>
+    </div>
+</div>
+	<div class="col-md-6">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#tweets" role="tab">tweets <span class="label label-pill label-default">{{user_info.tweet_count}}</span></a>
+      </li>
+			<li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#mentions" role="tab">Mentions <span class="label label-pill label-default">{{user_info.mention_count}}</span></a>
+      </li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#followers" role="tab">Followers <span class="label label-pill label-default">{{user_info.follower_count}}</span></a>
+			</li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#following" role="tab">Following <span class="label label-pill label-default">{{user_info.ifollowthem_count}}</span></a>
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div class="tab-pane active" id="tweets" role="tabpanel">
+        <ul class="list-group">
+					{% for tweet_data in user_info.tweets_data %}
+  					<li class="list-group-item">
+							{% if tweet_data.retweet_status %}
+							<a href="/accounts/profile/user/{{tweet_data.user.username}}" style="color:black !important">
+							<small class="text-muted">@{{tweet_data.user.username}}</a> retweeted</small>
+							<h5 class="list-group-item-heading">
+								<a href="/accounts/profile/user/{{tweet_data.origin_tweet_user.username}}" style="color:black !important">
+									{{tweet_data.origin_tweet_user.first_name}} {{tweet_data.origin_tweet_user.last_name}}
+								</a> <small class="text-muted">@{{tweet_data.origin_tweet_user.username}}
+									<a href="{{tweet_data.origin_tweet_user.username}}/{{tweet_data.id}}">
+										{{tweet_data.timestamp|timesince}}</a></small></h5>
+								{% else %}
+								<h5 class="list-group-item-heading">
+									<a href="/accounts/profile/user/{{tweet_data.user.username}}" style="color:black !important">
+										{{tweet_data.user.first_name}} {{tweet_data.user.last_name}}
+									</a> <small class="text-muted">@{{tweet_data.user.username}}
+										<a href="/{{tweet_data.user.username}}/{{tweet_data.id}}">
+											{{tweet_data.timestamp|timesince}}</a></small></h5>
+								{% endif %}
+							<p class="list-group-item-text responsive-image" style="word-wrap: break-word;">{{tweet_data.html_tags_edit}}</p>
+  					</li>
+					{% endfor %}
+				</ul>
+      </div>
+			<div class="tab-pane" id="mentions" role="tabpanel">
+        <ul class="list-group">
+					{% for mention in user_info.mentions %}
+  					<li class="list-group-item">
+  						<h5 class="list-group-item-heading">{{mention.user.username}} <small class="text-muted">@{{mention.user.username}} <a href="{{mention.user.username}}/{{mention.id}}">{{mention.timestamp|timesince}}</a></small></h4>
+							<p class="list-group-item-text responsive-image" style="word-wrap: break-word;">{{mention.html_tags_edit}}</p>
+  					</li>
+					{% endfor %}
+				</ul>
+      </div>
+			<div class="tab-pane" id="followers" role="tabpanel">
+				{% for follower in user_info.followers %}
+				<div class="card card-inverse" style="background-color: #333; border-color: #333;">
+					<a href="/accounts/profile/user/{{follower.user.username}}" style="text-decoration: none;">
+					<div class="card-block">
+						<h3 class="card-title">{{follower.user.first_name}} {{follower.user.last_name}}</h3>
+						<p class="card-text">{{follower.bio}}</p>
+					</div>
+				</a>
+				</div>
+				{% endfor %}
+			</div>
+      <div class="tab-pane" id="following" role="tabpanel">
+				{% for ifollow in user_info.ifollowthem %}
+				<div class="card card-inverse" style="background-color: #333; border-color: #333;">
+					<a href="/accounts/profile/user/{{ifollow.user.username}}" style="text-decoration: none;">
+					<div class="card-block">
+						<h3 class="card-title">{{ifollow.user.first_name}} {{ifollow.user.last_name}}</h3>
+						<p class="card-text">{{ifollow.bio}}</p>
+					</div>
+				</a>
+				</div>
+				{% endfor %}
+			</div>
+    </div>
+	</div>
+
+		<div class="col-md-3">
+			<div class="card">
+				<div class="card-header text-xs-center">
+					Who to Follow
+				</div>
+				<div class="card-block">
+					<ul class="list-group list-group-flush">
+						{% for person in who_to_follow %}
+							<li class="list-group-item"><a href="/accounts/profile/user/{{person.username}}" class="card-link">@{{person.username}}</a></li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endblock %}

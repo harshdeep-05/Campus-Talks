@@ -1,0 +1,74 @@
+{% extends "Tweet/tweet.html" %}
+
+{% block title %}
+	{{query}} - Search
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-3">
+		<div class="card">
+			<div class="card-header text-xs-center">
+				Trends
+			</div>
+			<div class="card-block">
+				<ul class="list-group list-group-flush">
+					{% for trend in trends %}
+					<li class="list-group-item"><a href="/search?search=%23{{trend.hasgtag|slice:"1:"}}">{{trend.hasgtag}}</a> <small>{{trend.tweet_count}} tweets</small></li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		{% if search_profile != None %}
+		<div class="card card-inverse card-success text-xs-center">
+			<a href="/accounts/profile/user/{{search_profile.username}}" style="text-decoration: none;">
+			<div class="card-block">
+				<blockquote class="card-blockquote">
+					<p>{{search_profile.first_name}} {{search_profile.last_name}} @{{search_profile.username}}</p>
+				</blockquote>
+			</div>
+			</a>
+		</div>
+		{% else %}
+			{% for person in people %}
+			<div class="card card-inverse card-success text-xs-center">
+			<a href="/accounts/profile/user/{{person.username}}" style="text-decoration: none;">
+			<div class="card-block">
+				<h3 class="card-title">{{person.first_name}} {{person.last_name}}</h3>
+				<p class="card-text">{{person.profile.bio}}</p>
+			</div>
+			</a>
+		</div>
+			{% endfor %}
+		{% endif %}
+		<div class="card">
+				<ul class="list-group">
+					{% for tweet_data in search_data %}
+					<li class="list-group-item">
+						<h5 class="list-group-item-heading">{{tweet_data.user.username}} <small class="text-muted">@{{tweet_data.user.username}} <a href="{{tweet_data.user.username}}/{{tweet_data.id}}">{{tweet_data.timestamp|timesince}}</a></small></h4>
+							<p class="list-group-item-text responsive-image" style="word-wrap: break-word;">{{tweet_data.html_tags_edit}}</p>
+						</li>
+						{% endfor %}
+					</ul>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="card">
+				<div class="card-header text-xs-center">
+					Who to Follow
+				</div>
+				<div class="card-block">
+					<ul class="list-group list-group-flush">
+						{% for person in who_to_follow %}
+							<li class="list-group-item"><a href="/accounts/profile/user/{{person.username}}" class="card-link">@{{person.username}}</a></li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
