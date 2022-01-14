@@ -1,4 +1,3 @@
-djnago==
 python==3.8.4
 Django==3.0.6
 django-bootstrap==0.2.4
@@ -9,3 +8,6 @@ django-filter==2.3.0
 django-heroku==0.3.1
 djangorestframework==3.11.0
 djangorestframework-simplejwt==4.7.2
+sqlparse
+backports.zoneinfo
+asgiref
